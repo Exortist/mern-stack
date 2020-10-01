@@ -82,7 +82,7 @@ const jsLoaders = () => {
 const plugins = () => {
     const base = [
         new HTMLWebpackPlugin({
-            template: './public/index.html',
+            template: './client/public/index.html',
             minify: {
                 collapseWhitespace: isProd
             }
@@ -90,7 +90,7 @@ const plugins = () => {
         new CleanWebpackPlugin(),
         // new CopyWebpackPlugin([
         //     {
-        //         // from: path.resolve(__dirname, 'src/favicon.ico'),
+        //         // from: path.resolve(__dirname, 'client/favicon.ico'),
         //         // to: path.resolve(__dirname, 'dist')
         //     }
         // ]),
@@ -109,8 +109,9 @@ const plugins = () => {
 module.exports = {
    // context: path.resolve(__dirname, 'src'),
     mode: 'development',
+
     entry: {
-        main: ['@babel/polyfill', './src/index.js'],
+        main: ['@babel/polyfill', './client/index.js'],
     },
     output: {
         filename: filename('js'),
@@ -124,10 +125,20 @@ module.exports = {
     },
     optimization: optimization(),
     devServer: {
-        port: 3000,
-        hot: isDev
+        host: '',
+        historyApiFallback: true,
+        port: '8080',
+        inline: true,
+        proxy: {
+            "/api/": {
+                target: "http://localhost:3000/"
+            }
+        },
+        contentBase: path.resolve(__dirname, 'dist'),
+        hot: isDev,
     },
-    devtool: isDev ? 'source-map' : '',
+    //devtool: isDev ? 'source-map' : '',
+    devtool: 'source-map',
     plugins: plugins(),
     module: {
         rules: [
